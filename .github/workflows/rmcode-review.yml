@@ -80,13 +80,7 @@ jobs:
         run: |
           base_sha="${{ inputs.base_sha }}"
           if [ -n "${{ inputs.source_repository }}" ] && [ "${{ inputs.source_repository }}" != "${{ github.repository }}" ]; then
-            source_pr="$(python3 - <<'PY'
-import os, re
-repo = os.environ.get("GITHUB_REPOSITORY", "")
-match = re.search(r"__PR(\d+)__", repo)
-print(match.group(1) if match else "")
-PY
-)"
+            source_pr="$(python3 -c 'import os, re; repo = os.environ.get("GITHUB_REPOSITORY", ""); match = re.search(r"__PR(\d+)__", repo); print(match.group(1) if match else "")')"
             if [ -n "$source_pr" ]; then
               echo "Resolving source benchmark base for ${{ inputs.source_repository }}#$source_pr"
               if source_base_sha="$(curl --fail --location --show-error --silent \
