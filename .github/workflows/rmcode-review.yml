@@ -79,21 +79,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
           base_sha="${{ inputs.base_sha }}"
-          if [ -n "${{ inputs.source_repository }}" ] && [ "${{ inputs.source_repository }}" != "${{ github.repository }}" ]; then
-            source_pr="$(python3 -c 'import os, re; repo = os.environ.get("GITHUB_REPOSITORY", ""); match = re.search(r"__PR(\d+)__", repo); print(match.group(1) if match else "")')"
-            if [ -n "$source_pr" ]; then
-              echo "Resolving source benchmark base for ${{ inputs.source_repository }}#$source_pr"
-              if source_base_sha="$(curl --fail --location --show-error --silent \
-                  "https://api.github.com/repos/${{ inputs.source_repository }}/pulls/$source_pr" \
-                  -H "Authorization: token $GITHUB_TOKEN" \
-                  -H "Accept: application/vnd.github+json" \
-                  | python3 -c 'import json, sys; print(json.load(sys.stdin)["base"]["sha"])')"; then
-                base_sha="$source_base_sha"
-              else
-                echo "Could not resolve source benchmark base; using dispatched base SHA"
-              fi
-            fi
-          fi
           if git fetch --no-tags --depth=1 origin "$base_sha" \
             && git fetch --no-tags --depth=1 origin "${{ inputs.head_sha }}" \
             && git checkout --force "$base_sha" \
