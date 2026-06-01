@@ -52,7 +52,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ripgrep
 
       - name: Install extractor runtime dependencies
-        run: npm install --no-save web-tree-sitter tree-sitter-wasms
+        run: npm install --no-save --legacy-peer-deps web-tree-sitter tree-sitter-wasms
 
       - name: Download extractor
         run: |
